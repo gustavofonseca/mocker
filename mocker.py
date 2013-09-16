@@ -60,6 +60,18 @@ __version__ = "1.1.1"
 
 ERROR_PREFIX = "[Mocker] "
 
+# --------------------------------------------------------------------
+# Compatibility helpers
+
+PY2 = sys.version_info[0] == 2
+
+
+if PY2:
+    exec('def reraise(type, value, traceback): raise type, value, traceback')
+else:
+    def reraise(type, value, traceback):
+        raise value.with_traceback(traceback)
+
 
 # --------------------------------------------------------------------
 # Exceptions
@@ -2226,7 +2238,8 @@ class Patcher(Task):
                     pass
                 else:
                     return __getattr__(*action.args, **action.kwargs)
-            raise type, value, traceback
+
+            reraise(type, value, traceback)
 
 
 class PatchedMethod(object):
