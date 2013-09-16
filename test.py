@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from __future__ import print_function
 import unittest
 import tempfile
 import inspect
@@ -29,7 +30,7 @@ from mocker import \
 
 class TestCase(unittest.TestCase):
     """Python 2.3 lacked a couple of useful aliases."""
-    
+
     assertTrue = unittest.TestCase.failUnless
     assertFalse = unittest.TestCase.failIf
 
@@ -86,7 +87,7 @@ class IntegrationTest(TestCase):
     def test_spec_and_type(self):
         class C(object):
             def m(self, a): pass
-        
+
         obj = self.mocker.mock(C)
 
         obj.m(1)
@@ -199,7 +200,7 @@ class IntegrationTest(TestCase):
         class C(object):
             def sum(self, *args):
                 return sum(args)
-        
+
         obj = self.mocker.proxy(C())
         expect(obj.multiply(2, 3)).result(6).nospec()
         expect(obj.sum(0, 0)).result(1)
@@ -249,7 +250,7 @@ class IntegrationTest(TestCase):
         self.mocker.replay()
         from Queue import Queue
         self.assertEquals(Queue().empty(), False)
-        
+
     def test_patch_with_spec(self):
         class C(object):
             def method(self, a, b):
@@ -378,15 +379,15 @@ class MockerTestCaseTest(TestCase):
 
         try:
             MyTest("unexistent_method").run()
-        except Exception, e:
+        except Exception as e:
             expected_error = e
 
         class MyTest(MockerTestCase):
             pass
-        
+
         try:
             MyTest("unexistent_method").run()
-        except Exception, e:
+        except Exception as e:
             self.assertEquals(str(e), str(expected_error))
             self.assertEquals(type(e), type(expected_error))
 
@@ -459,7 +460,7 @@ class MockerTestCaseTest(TestCase):
                 mock = self.mocker.mock()
                 mock.x
                 self.mocker.replay()
-        
+
         result = unittest.TestResult()
         MyTest("test_method").run(result)
 
@@ -558,7 +559,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_is_raises_on_mismatch(self):
         try:
             self.test.failUnlessIs([], [])
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "[] is not []")
         else:
             self.fail("AssertionError not raised")
@@ -566,7 +567,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_is_uses_msg(self):
         try:
             self.test.failUnlessIs([], [], "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -582,7 +583,7 @@ class MockerTestCaseTest(TestCase):
         obj = []
         try:
             self.test.failIfIs(obj, obj)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "[] is []")
         else:
             self.fail("AssertionError not raised")
@@ -591,7 +592,7 @@ class MockerTestCaseTest(TestCase):
         obj = []
         try:
             self.test.failIfIs(obj, obj, "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -605,7 +606,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_in_raises_on_mismatch(self):
         try:
             self.test.failUnlessIn(1, [])
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "1 not in []")
         else:
             self.fail("AssertionError not raised")
@@ -613,7 +614,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_in_uses_msg(self):
         try:
             self.test.failUnlessIn(1, [], "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -627,7 +628,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_in_raises_on_mismatch(self):
         try:
             self.test.failIfIn(1, [1])
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "1 in [1]")
         else:
             self.fail("AssertionError not raised")
@@ -635,7 +636,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_in_uses_msg(self):
         try:
             self.test.failIfIn(1, [1], "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -649,7 +650,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_starts_with_raises_on_mismatch(self):
         try:
             self.test.failUnlessStartsWith("abc", "def")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "'abc' doesn't start with 'def'")
         else:
             self.fail("AssertionError not raised")
@@ -657,7 +658,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_starts_with_uses_msg(self):
         try:
             self.test.failUnlessStartsWith("abc", "def", "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -676,7 +677,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_starts_with_raises_on_mismatch(self):
         try:
             self.test.failIfStartsWith("abcdef", "abc")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "'abcdef' starts with 'abc'")
         else:
             self.fail("AssertionError not raised")
@@ -684,7 +685,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_starts_with_uses_msg(self):
         try:
             self.test.failIfStartsWith("abcdef", "abc", "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -703,7 +704,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_ends_with_raises_on_mismatch(self):
         try:
             self.test.failUnlessEndsWith("abc", "def")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "'abc' doesn't end with 'def'")
         else:
             self.fail("AssertionError not raised")
@@ -711,7 +712,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_ends_with_uses_msg(self):
         try:
             self.test.failUnlessEndsWith("abc", "def", "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -730,7 +731,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_ends_with_raises_on_mismatch(self):
         try:
             self.test.failIfEndsWith("abcdef", "def")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "'abcdef' ends with 'def'")
         else:
             self.fail("AssertionError not raised")
@@ -738,7 +739,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_ends_with_uses_msg(self):
         try:
             self.test.failIfEndsWith("abcdef", "def", "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -757,7 +758,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_approximates_raises_on_mismatch(self):
         try:
             self.test.failUnlessApproximates(1, 2, 0.999)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "abs(1 - 2) > 0.999")
         else:
             self.fail("AssertionError not raised")
@@ -765,7 +766,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_unless_approximates_uses_msg(self):
         try:
             self.test.failUnlessApproximates(1, 2, 0.999, "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -779,7 +780,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_approximates_raises_on_mismatch(self):
         try:
             self.test.failIfApproximates(1, 2, 1)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "abs(1 - 2) <= 1")
         else:
             self.fail("AssertionError not raised")
@@ -787,7 +788,7 @@ class MockerTestCaseTest(TestCase):
     def test_fail_if_approximates_uses_msg(self):
         try:
             self.test.failIfApproximates(1, 2, 1, "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -805,7 +806,7 @@ class MockerTestCaseTest(TestCase):
             def method(self, b): pass
         try:
             self.test.failUnlessMethodsMatch(Fake, Real)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "Fake.method(self, a) != "
                                       "Real.method(self, b)")
         else:
@@ -818,7 +819,7 @@ class MockerTestCaseTest(TestCase):
             pass
         try:
             self.test.failUnlessMethodsMatch(Fake, Real)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "Fake.method(self, a) not present "
                                       "in Real")
         else: self.fail("AssertionError not raised")
@@ -830,7 +831,7 @@ class MockerTestCaseTest(TestCase):
             pass
         try:
             self.test.failUnlessMethodsMatch(Fake, Real)
-        except AssertionError, e:
+        except AssertionError as e:
             self.fail("AssertionError shouldn't be raised")
 
     def test_fail_unless_methods_match_raises_on_different_priv_method(self):
@@ -840,7 +841,7 @@ class MockerTestCaseTest(TestCase):
             def _method(self, b): pass
         try:
             self.test.failUnlessMethodsMatch(Fake, Real)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "Fake._method(self, a) != "
                                       "Real._method(self, b)")
         else:
@@ -870,7 +871,7 @@ class MockerTestCaseTest(TestCase):
             return args
         try:
             self.test.failUnlessRaises(ValueError, f, 1, "foo")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(
                 str(e),
                 "ValueError not raised ((1, 'foo') returned)")
@@ -906,7 +907,7 @@ class MockerTestCaseTest(TestCase):
         cm = with_manager.__enter__()
         try:
             with_manager.__exit__(None, None, None)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "ValueError not raised")
             self.assertEquals(cm.exception, None)
         else:
@@ -943,7 +944,7 @@ class MockerTestCaseTest(TestCase):
         try:
             self.test.failUnlessRaisesRegexp(MyException, "Foo:.*foo",
                                              f, 1, "foo")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e),
                               '"Error: (1, \'foo\')" doesn\'t match '
                               '\'Foo:.*foo\'')
@@ -955,7 +956,7 @@ class MockerTestCaseTest(TestCase):
             return args
         try:
             self.test.failUnlessRaisesRegexp(ValueError, "blah", f, 1, "foo")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(
                 str(e),
                 "ValueError not raised ((1, 'foo') returned)")
@@ -995,7 +996,7 @@ class MockerTestCaseTest(TestCase):
         cm = with_manager.__enter__()
         try:
             with_manager.__exit__(MyException, MyException(1, "foo"), None)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e),
                               '"Error: (1, \'foo\')" doesn\'t match \'oo.*f\'')
             self.assertEquals(cm.exception.args, (1, "foo"))
@@ -1007,7 +1008,7 @@ class MockerTestCaseTest(TestCase):
         cm = with_manager.__enter__()
         try:
             with_manager.__exit__(None, None, None)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "ValueError not raised")
             self.assertEquals(cm.exception, None)
         else:
@@ -1034,7 +1035,7 @@ class MockerTestCaseTest(TestCase):
         obj = C()
         try:
             self.test.failUnlessIsInstance(obj, D)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "<C object> is not an instance of D")
         else:
             self.fail("AssertionError not raised")
@@ -1045,7 +1046,7 @@ class MockerTestCaseTest(TestCase):
         obj = C()
         try:
             self.test.failUnlessIsInstance(obj, D, "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -1065,7 +1066,7 @@ class MockerTestCaseTest(TestCase):
         obj = C()
         try:
             self.test.failIfIsInstance(obj, C)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "<C object> is an instance of C")
         else:
             self.fail("AssertionError not raised")
@@ -1075,7 +1076,7 @@ class MockerTestCaseTest(TestCase):
         obj = C()
         try:
             self.test.failIfIsInstance(obj, C, "oops!")
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "oops!")
         else:
             self.fail("AssertionError not raised")
@@ -1379,7 +1380,7 @@ class MockerTest(TestCase):
 
         try:
             self.mocker.verify()
-        except AssertionError, e:
+        except AssertionError as e:
             message = os.linesep.join(["[Mocker] Unmet expectations:",
                                        "",
                                        "=> 1 failed",
@@ -1716,7 +1717,7 @@ class MockerTest(TestCase):
         self.mocker.replay()
         try:
             self.mocker.act(self.path)
-        except AssertionError, e:
+        except AssertionError as e:
             pass
         else:
             self.fail("AssertionError not raised")
@@ -2554,7 +2555,7 @@ class MatchParamsTest(TestCase):
 
     def false(self, *args):
         self.assertFalse(match_params(*args), repr(args))
-    
+
     def test_any_repr(self):
         self.assertEquals(repr(ANY), "ANY")
 
@@ -2832,7 +2833,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("getattr", ("attr",), {}))
 
     def test_setattr(self):
@@ -2840,7 +2841,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("setattr", ("attr", 24), {}))
 
     def test_delattr(self):
@@ -2848,7 +2849,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("delattr", ("attr",), {}))
 
     def test_call(self):
@@ -2856,7 +2857,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("call", (1,), {"a": 2}))
 
     def test_contains(self):
@@ -2864,7 +2865,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("contains", ("value",), {}))
 
     def test_getitem(self):
@@ -2872,7 +2873,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("getitem", ("key",), {}))
 
     def test_setitem(self):
@@ -2880,7 +2881,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("setitem", ("key", "value"), {}))
 
     def test_delitem(self):
@@ -2888,7 +2889,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("delitem", ("key",), {}))
 
     def test_len(self):
@@ -2896,7 +2897,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("len", (), {}))
 
     def test_len_with_mock_result(self):
@@ -2914,7 +2915,7 @@ class MockTest(TestCase):
         self.mocker.act = raise_error
         try:
             len(self.mock)
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEquals(str(e), "Kaboom!")
         except MatchError:
             self.fail("Expected AttributeError, not MatchError.")
@@ -2933,7 +2934,7 @@ class MockTest(TestCase):
         self.mocker.act = raise_error
         try:
             self.mock.__length_hint__
-        except AttributeError, e:
+        except AttributeError as e:
             self.assertEquals(str(e), "No __length_hint__ here!")
         except MatchError:
             self.fail("Expected AttributeError, not MatchError.")
@@ -2945,7 +2946,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("nonzero", (), {}))
 
     def test_nonzero_returns_true_on_match_error(self):
@@ -2972,7 +2973,7 @@ class MockTest(TestCase):
         (path,) = self.paths
         self.assertEquals(type(path), Path)
         self.assertTrue(path.parent_path is self.mock.__mocker_path__)
-        self.assertEquals(path, self.mock.__mocker_path__ + 
+        self.assertEquals(path, self.mock.__mocker_path__ +
                                 Action("iter", (), {}))
 
     def test_passthrough_on_unexpected(self):
@@ -3018,7 +3019,7 @@ class MockTest(TestCase):
         mock = Mock(StubMocker())
         try:
             mock.__mocker_act__("kind")
-        except AssertionError, e:
+        except AssertionError as e:
             message = os.linesep.join(["[Mocker] Unmet expectation:",
                                        "",
                                        "=> An",
@@ -3171,7 +3172,7 @@ class EventTest(TestCase):
 
         try:
             event.run("i.am.a.path")
-        except AssertionError, e:
+        except AssertionError as e:
             message = os.linesep.join(["i.am.a.path",
                                        "- 1 failed",
                                        "- 3 failed"])
@@ -3195,7 +3196,7 @@ class EventTest(TestCase):
 
         try:
             event.run(42)
-        except AssertionError, e:
+        except AssertionError as e:
             message = os.linesep.join(["i.am.a.path",
                                        "- Run: 42", # <==
                                        "- 1 failed",
@@ -3213,7 +3214,7 @@ class EventTest(TestCase):
 
     def test_may_run_user_code(self):
         """
-        Tasks that may run user code should be run if a prior failure has 
+        Tasks that may run user code should be run if a prior failure has
         already been detected.
         """
         class MyTask(Task):
@@ -3231,7 +3232,7 @@ class EventTest(TestCase):
 
         try:
             event.run("i.am.a.path")
-        except AssertionError, e:
+        except AssertionError as e:
             message = os.linesep.join(["i.am.a.path",
                                        "- 1 failed",
                                        "- 3 failed"])
@@ -3299,7 +3300,7 @@ class EventTest(TestCase):
 
         try:
             event.verify()
-        except AssertionError, e:
+        except AssertionError as e:
             message = os.linesep.join(["i.am.a.path",
                                        "- 1 failed",
                                        "- 3 failed"])
@@ -3550,7 +3551,7 @@ class RunCounterTest(TestCase):
         event5.add_task(RunCounter(1))
         event5.add_task(ImplicitRunCounter(1))
         event5.add_task(RunCounter(1))
-        
+
         # First, when the previous event isn't a getattr.
 
         run_counter_removal_recorder(self.mocker, event5)
@@ -3787,7 +3788,7 @@ class OrdererTest(TestCase):
         orderer2.add_dependency(orderer1)
         try:
             orderer2.run(None)
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "Should be after: path1")
         else:
             self.fail("AssertionError not raised")
@@ -3861,7 +3862,7 @@ class SpecCheckerTest(TestCase):
         task = SpecChecker(self.cls.normal)
         try:
             task.run(self.path(1))
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "Specification is normal(a, b, c=3): "
                                       "'b' not provided")
         else:
@@ -3871,7 +3872,7 @@ class SpecCheckerTest(TestCase):
         task = SpecChecker(None)
         try:
             task.verify()
-        except AssertionError, e:
+        except AssertionError as e:
             self.assertEquals(str(e), "Method not found in real specification")
         else:
             self.fail("AssertionError not raised")
@@ -3884,7 +3885,7 @@ class SpecCheckerTest(TestCase):
         try:
             task = SpecChecker(adler32)
             task.run(self.path("asd"))
-        except TypeError, e:
+        except TypeError as e:
             self.fail("TypeError: %s" % str(e))
 
     def test_recorder(self):
@@ -4476,7 +4477,7 @@ class PatcherTest(TestCase):
         obj = C()
         try:
             obj.use_non_existing_attribute()
-        except AttributeError, error:
+        except AttributeError as error:
             message = "'C' object has no attribute 'bad_attribute'"
             self.assertEquals(message, str(error))
 
@@ -4485,20 +4486,20 @@ def main():
     try:
         unittest.main()
     finally:
-        print
+        print()
         if coverage:
             coverage.stop()
             (filename, executed,
              missing, missing_human) = coverage.analysis("mocker.py")
             if missing:
-                print "WARNING: Some statements were not executed:"
-                print
+                print("WARNING: Some statements were not executed:")
+                print()
                 coverage.report(["mocker.py"])
             else:
-                print "Tests covered 100% of statements!"
+                print("Tests covered 100% of statements!")
         else:
-            print "WARNING: No coverage test performed (missing coverage.py)"
-        print
+            print("WARNING: No coverage test performed (missing coverage.py)")
+        print()
 
 
 if __name__ == "__main__":

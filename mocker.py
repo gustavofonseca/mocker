@@ -393,7 +393,7 @@ class MockerTestCase(unittest.TestCase):
             callableObj = args[0]
             try:
                 result = callableObj(*args[1:], **kwargs)
-            except excClass, e:
+            except excClass as e:
                 match_regexp(e)
                 return e
             else:
@@ -631,7 +631,7 @@ class MockerBase(object):
         for event in self._events:
             try:
                 event.verify()
-            except AssertionError, e:
+            except AssertionError as e:
                 error = str(e)
                 if not error:
                     raise RuntimeError("Empty error message from %r"
@@ -672,7 +672,7 @@ class MockerBase(object):
     def proxy(self, object, spec=True, type=True, name=None, count=True,
               passthrough=True):
         """Return a new mock object which proxies to the given object.
- 
+
         Proxies are useful when only part of the behavior of an object
         is to be mocked.  Unknown expressions may be passed through to
         the real implementation implicitly (if the C{passthrough} argument
@@ -891,7 +891,7 @@ class MockerBase(object):
 
     def result(self, value):
         """Make the last recorded event return the given value on replay.
-        
+
         @param value: Object to be returned when the event is replayed.
         """
         self.call(lambda *args, **kwargs: value)
@@ -955,7 +955,7 @@ class MockerBase(object):
 
     def unorder(self):
         """Disable the ordered mode.
-        
+
         See the L{order()} method for more information.
         """
         self._ordering = False
@@ -1182,7 +1182,7 @@ class Mock(object):
             path.root_object = object
         try:
             return self.__mocker__.act(path)
-        except MatchError, exception:
+        except MatchError as exception:
             root_mock = path.root_mock
             if (path.root_object is not None and
                 root_mock.__mocker_passthrough__):
@@ -1190,7 +1190,7 @@ class Mock(object):
             # Reinstantiate to show raise statement on traceback, and
             # also to make the traceback shown shorter.
             raise MatchError(str(exception))
-        except AssertionError, e:
+        except AssertionError as e:
             lines = str(e).splitlines()
             message = [ERROR_PREFIX + "Unmet expectation:", ""]
             message.append("=> " + lines.pop(0))
@@ -1240,7 +1240,7 @@ class Mock(object):
         # something that doesn't offer them.
         try:
             result = self.__mocker_act__("len")
-        except MatchError, e:
+        except MatchError as e:
             raise AttributeError(str(e))
         if type(result) is Mock:
             return 0
@@ -1249,7 +1249,7 @@ class Mock(object):
     def __nonzero__(self):
         try:
             result = self.__mocker_act__("nonzero")
-        except MatchError, e:
+        except MatchError as e:
             return True
         if type(result) is Mock:
             return True
@@ -1376,7 +1376,7 @@ class Path(object):
             return None
         return self.actions[-1].path
     parent_path = property(parent_path)
- 
+
     def __add__(self, action):
         """Return a new path which includes the given action at the end."""
         return self.__class__(self.root_mock, self.root_object,
@@ -1384,7 +1384,7 @@ class Path(object):
 
     def __eq__(self, other):
         """Verify if the two paths are equal.
-        
+
         Two paths are equal if they refer to the same mock object, and
         have the actions with equal kind, args and kwargs.
         """
@@ -1399,7 +1399,7 @@ class Path(object):
 
     def matches(self, other):
         """Verify if the two paths are equivalent.
-        
+
         Two paths are equal if they refer to the same mock object, and
         have the same actions performed on them.
         """
@@ -1692,7 +1692,7 @@ class Event(object):
             if not errors or not task.may_run_user_code():
                 try:
                     task_result = task.run(path)
-                except AssertionError, e:
+                except AssertionError as e:
                     error = str(e)
                     if not error:
                         raise RuntimeError("Empty error message from %r" % task)
@@ -1739,7 +1739,7 @@ class Event(object):
         for task in self._tasks:
             try:
                 task.verify()
-            except AssertionError, e:
+            except AssertionError as e:
                 error = str(e)
                 if not error:
                     raise RuntimeError("Empty error message from %r" % task)
@@ -1987,7 +1987,7 @@ class Orderer(Task):
 
     def __init__(self, path):
         self.path = path
-        self._run = False 
+        self._run = False
         self._dependencies = []
 
     def replay(self):
