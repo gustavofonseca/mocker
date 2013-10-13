@@ -31,7 +31,6 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-import __builtin__
 import tempfile
 import unittest
 import inspect
@@ -42,6 +41,12 @@ import os
 import re
 import gc
 
+PY2 = sys.version_info[0] == 2
+
+if PY2:
+    import __builtin__ as builtins
+else:
+    import builtins
 
 if sys.version_info < (2, 4):
     from sets import Set as set # pragma: nocover
@@ -742,7 +747,7 @@ class MockerBase(object):
         if spec is True:
             spec = object
         if type is True:
-            type = __builtin__.type(object)
+            type = builtins.type(object)
         return Mock(self, spec=spec, type=type, object=object,
                     name=name, count=count, passthrough=passthrough)
 
