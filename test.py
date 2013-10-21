@@ -2265,11 +2265,11 @@ class ActionTest(TestCase):
 
     def test_execute_caching(self):
         values = iter(range(10))
-        obj = lambda: values.next()
+        obj = lambda: next(values)
         action = Action("call", (), {})
         self.assertEqual(action.execute(obj), 0)
         self.assertEqual(action.execute(obj), 0)
-        obj = lambda: values.next()
+        obj = lambda: next(values)
         self.assertEqual(action.execute(obj), 1)
 
     def test_equals(self):

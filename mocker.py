@@ -91,6 +91,14 @@ else:
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
 
+
+if PY2:
+    def is_unboundmethod(object):
+        return isinstance(object, types.UnboundMethodType)
+else:
+    def is_unboundmethod(object):
+        return hasattr(object, '__self__')
+
 # --------------------------------------------------------------------
 # Exceptions
 
@@ -755,7 +763,7 @@ class MockerBase(object):
                     for attr in attr_stack:
                         object = getattr(object, attr)
                     break
-        if isinstance(object, types.UnboundMethodType):
+        if is_unboundmethod(object):
             object = object.im_func
         if spec is True:
             spec = object
