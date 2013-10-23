@@ -25,7 +25,7 @@ from mocker import \
     mock_returner_recorder, FunctionRunner, Orderer, SpecChecker, \
     spec_checker_recorder, match_params, ANY, IS, CONTAINS, IN, MATCH, ARGS, \
     KWARGS, MatchError, PathExecuter, ProxyReplacer, Patcher, Undefined, \
-    PatchedMethod, MockerTestCase, ReplayRestoreEvent, OnRestoreCaller, Expect
+    PatchedMethod, MockerTestCase, ReplayRestoreEvent, OnRestoreCaller, Expect, MAXINT
 
 
 class TestCase(unittest.TestCase):
@@ -3452,7 +3452,7 @@ class RunCounterTest(TestCase):
     def test_create_unbounded(self):
         task = RunCounter(2, None)
         self.assertEqual(task.min, 2)
-        self.assertEqual(task.max, sys.maxint)
+        self.assertEqual(task.max, MAXINT)
 
     def test_run_one_argument(self):
         task = RunCounter(2)
