@@ -25,7 +25,7 @@ from mocker import \
     mock_returner_recorder, FunctionRunner, Orderer, SpecChecker, \
     spec_checker_recorder, match_params, ANY, IS, CONTAINS, IN, MATCH, ARGS, \
     KWARGS, MatchError, PathExecuter, ProxyReplacer, Patcher, Undefined, \
-    PatchedMethod, MockerTestCase, ReplayRestoreEvent, OnRestoreCaller, Expect, MAXINT
+    PatchedMethod, MockerTestCase, ReplayRestoreEvent, OnRestoreCaller, Expect, MAXINT, PY2, iteritems
 
 
 class TestCase(unittest.TestCase):
@@ -244,11 +244,20 @@ class IntegrationTest(TestCase):
         self.assertTrue(os.path.isfile("unexistent"))
         self.assertFalse(os.path.isfile("unexistent"))
 
+    @unittest.skipUnless(PY2, 'Queue module is py2 only')
     def test_replace_class_method(self):
         empty = self.mocker.replace("Queue.Queue.empty")
         expect(empty()).result(False)
         self.mocker.replay()
         from Queue import Queue
+        self.assertEqual(Queue().empty(), False)
+
+    @unittest.skipIf(PY2, 'queue module is py3 only')
+    def test_replace_class_method_py3(self):
+        empty = self.mocker.replace("queue.Queue.empty")
+        expect(empty()).result(False)
+        self.mocker.replay()
+        from queue import Queue
         self.assertEqual(Queue().empty(), False)
 
     def test_patch_with_spec(self):
@@ -1676,8 +1685,15 @@ class MockerTest(TestCase):
         mock = self.mocker.replace(original, passthrough=False)
         self.assertEqual(mock.__mocker_passthrough__, False)
 
+    @unittest.skipUnless(PY2, 'Queue module is py2 only')
     def test_replace_with_bound_method(self):
         from Queue import Queue
+        mock = self.mocker.replace(Queue.empty)
+        self.assertEqual(mock.__mocker_object__, Queue.empty.im_func)
+
+    @unittest.skipIf(PY2, 'queue module is py3 only')
+    def test_replace_with_bound_method(self):
+        from queue import Queue
         mock = self.mocker.replace(Queue.empty)
         self.assertEqual(mock.__mocker_object__, Queue.empty.im_func)
 
@@ -3036,7 +3052,7 @@ class MockTest(TestCase):
         """Check for kind support on Action.execute() and Path.__str__()."""
         mocker = Mocker()
         check = []
-        for name, attr in Mock.__dict__.iteritems():
+        for name, attr in iteritems(Mock.__dict__):
             if not name.startswith("__mocker_") and hasattr(attr, "__call__"):
                 mock = mocker.mock()
                 args = ["arg"] * (attr.func_code.co_argcount - 1)
