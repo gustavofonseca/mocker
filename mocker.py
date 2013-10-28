@@ -786,7 +786,7 @@ class MockerBase(with_metaclass(mockerbase_metaclass, object)):
                         object = getattr(object, attr)
                     break
         if is_unboundmethod(object):
-            object = object.im_func
+            object = object.im_func if PY2 else object
         if spec is True:
             spec = object
         if type is True:

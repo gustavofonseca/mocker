@@ -1166,6 +1166,7 @@ class MockerTestCaseTest(TestCase):
         self.assertEqual(get_method("failIfIdentical"),
                           get_method("failIfIs"))
 
+    @unittest.skip('[Deprecated] testing py2.3 stuff')
     def test_missing_python23_aliases(self):
         self.assertEqual(MockerTestCase.assertTrue.im_func,
                           MockerTestCase.failUnless.im_func)
@@ -1606,8 +1607,14 @@ class MockerTest(TestCase):
         self.assertEqual(module.__mocker_name__, "os.path")
         self.assertEqual(module.__mocker_object__, path)
 
+    @unittest.skipUnless(PY2, 'func_name attribute is py2 only')
     def test_proxy_with_module_function_string(self):
         mock = self.mocker.proxy("os.path.join.func_name")
+        self.assertEqual(mock.__mocker_object__, "join")
+
+    @unittest.skipIf(PY2, '__name__ attribute is py3 only')
+    def test_proxy_with_module_function_string(self):
+        mock = self.mocker.proxy("os.path.join.__name__")
         self.assertEqual(mock.__mocker_object__, "join")
 
     def test_proxy_with_string_and_name(self):
@@ -1649,8 +1656,14 @@ class MockerTest(TestCase):
         self.assertTrue(task.mock.__mocker_object__ is path)
         self.assertTrue(module is not path)
 
+    @unittest.skipUnless(PY2, 'func_name is py2 only')
     def test_replace_with_module_function_string(self):
         mock = self.mocker.replace("os.path.join.func_name")
+        self.assertEqual(mock.__mocker_object__, "join")
+
+    @unittest.skipIf(PY2, '__name__ is py3 only')
+    def test_replace_with_module_function_string(self):
+        mock = self.mocker.replace("os.path.join.__name__")
         self.assertEqual(mock.__mocker_object__, "join")
 
     def test_replace_with_string_and_name(self):
@@ -1695,7 +1708,7 @@ class MockerTest(TestCase):
     def test_replace_with_bound_method(self):
         from queue import Queue
         mock = self.mocker.replace(Queue.empty)
-        self.assertEqual(mock.__mocker_object__, Queue.empty.im_func)
+        self.assertEqual(mock.__mocker_object__, Queue.empty)
 
     def test_add_and_get_event(self):
         self.mocker.add_event(41)
@@ -1736,10 +1749,9 @@ class MockerTest(TestCase):
         try:
             self.mocker.act(self.path)
         except AssertionError as e:
-            pass
+            self.assertEqual(str(e), "[Mocker] Unexpected expression: mock.attr")
         else:
             self.fail("AssertionError not raised")
-        self.assertEqual(str(e), "[Mocker] Unexpected expression: mock.attr")
 
     def test_replaying_matching(self):
         calls = []
@@ -3055,7 +3067,8 @@ class MockTest(TestCase):
         for name, attr in iteritems(Mock.__dict__):
             if not name.startswith("__mocker_") and hasattr(attr, "__call__"):
                 mock = mocker.mock()
-                args = ["arg"] * (attr.func_code.co_argcount - 1)
+                attr_func_code = attr.func_code if PY2 else attr.__code__
+                args = ["arg"] * (attr_func_code.co_argcount - 1)
                 try:
                     attr(mock, *args)
                 except:
